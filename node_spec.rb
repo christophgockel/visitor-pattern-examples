@@ -25,6 +25,13 @@ module Node
 
         subject.accept(visitor)
       end
+
+      it "dispatches dynamically to the class specific method" do
+        visitor = double(:visit_double)
+        expect(visitor).to receive(:visit_double).with(subject)
+
+        subject.accept(visitor)
+      end
     end
 
     describe TextNode do

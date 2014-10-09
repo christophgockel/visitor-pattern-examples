@@ -11,7 +11,14 @@ module Node
 
   module Visitable
     def accept(visitor)
-      visitor.visit(self)
+      class_name = visitor.class.to_s.split('::').last.downcase
+      method_name = "visit_#{class_name}".to_sym
+
+      if visitor.respond_to? method_name
+        visitor.send method_name, self
+      else
+        visitor.visit self
+      end
     end
   end
 
