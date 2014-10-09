@@ -27,8 +27,9 @@ module Node
       end
 
       it "dispatches dynamically to the class specific method" do
-        visitor = double(:visit_double)
-        expect(visitor).to receive(:visit_double).with(subject)
+        Node.const_set("Temp", subject.class)
+        visitor = double(:visit_temp)
+        expect(visitor).to receive(:visit_temp).with(subject)
 
         subject.accept(visitor)
       end
