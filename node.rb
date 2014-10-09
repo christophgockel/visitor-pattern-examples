@@ -9,23 +9,41 @@ module Node
     end
   end
 
+  module Visitable
+    def accept(visitor)
+      visitor.visit(self)
+    end
+  end
+
+  module TextNode
+    attr_reader :content
+
+    def initialize(text = "")
+      @content = text
+    end
+  end
+
   class Html
-    include Container
+    include Container, Visitable
   end
 
   class Head
-    include Container
+    include Container, Visitable
+  end
+
+  class Title
+    include Container, Visitable, TextNode
   end
 
   class Body
-    include Container
+    include Container, Visitable
   end
 
   class H1
-    include Container
+    include Container, Visitable, TextNode
   end
 
   class P
-    include Container
+    include Container, Visitable, TextNode
   end
 end

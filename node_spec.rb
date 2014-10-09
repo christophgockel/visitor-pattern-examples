@@ -1,40 +1,79 @@
 require_relative 'node'
 
 module Node
-  describe Html do
-    it "is a thing" do
-      described_class.new
+  context "Modules" do
+    describe Container do
+      subject { Class.new { include Container }.new }
+
+      it "has no child nodes when created" do
+        expect(subject.children.length).to eq 0
+      end
+
+      it "can have child nodes" do
+        subject.add(double)
+
+        expect(subject.children.length).to eq 1
+      end
     end
 
-    it "can contain other nodes" do
-      html = Html.new
-      html.add(Head.new)
+    describe Visitable do
+      subject { Class.new { include Visitable }.new }
+      let(:visitor) { double(:visit) }
 
-      expect(html.children.count).to eq 1
+      it "accepts visitors" do
+        expect(visitor).to receive(:visit).with(subject)
+
+        subject.accept(visitor)
+      end
+    end
+
+    describe TextNode do
+      subject { Class.new { include TextNode } }
+
+      it "has no default text" do
+        text_node = subject.new
+
+        expect(text_node.content).to eq ""
+      end
+
+      it "can have text content" do
+        text_node = subject.new("some text")
+
+        expect(text_node.content).to eq "some text"
+      end
     end
   end
 
-  describe Head do
-    it 'is a thing' do
-      described_class.new
-    end
-  end
+  context "Classes" do
+    [
+      Html,
+      Head,
+      Title,
+      Body,
+      H1,
+      P
+    ].each do |klass|
+      describe klass do
+        it "acts as a container" do
+          expect(klass.new).to be_a Container
+        end
 
-  describe Body do
-    it 'is a thing' do
-      described_class.new
+        it "acts as a visitable" do
+          expect(klass.new).to be_a Visitable
+        end
+      end
     end
-  end
 
-  describe H1 do
-    it 'is a thing' do
-      described_class.new
-    end
-  end
-
-  describe P do
-    it 'is a thing' do
-      described_class.new
+    [
+      Title,
+      H1,
+      P
+    ].each do |klass|
+      describe klass do
+        it "acts as text node" do
+          expect(klass.new).to be_a TextNode
+        end
+      end
     end
   end
 end
