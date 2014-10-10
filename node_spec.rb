@@ -35,6 +35,19 @@ module Node
       end
     end
 
+    describe VisitableContainer do
+      subject { Class.new { include VisitableContainer }.new }
+      let(:visitor) { double }
+
+      it "accepts visitors" do
+        Node.const_set("TempVC", subject.class)
+        expect(visitor).to receive(:visit_enter_tempvc).with(subject)
+        expect(visitor).to receive(:visit_leave_tempvc).with(subject)
+
+        subject.accept(visitor)
+      end
+    end
+
     describe TextNode do
       subject { Class.new { include TextNode } }
 
